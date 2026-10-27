@@ -1,0 +1,7 @@
+score/
+build/
+mazes/
+*.cfg
+tests/test
+tests/test_file
+tests/test_maze
