@@ -6,6 +6,7 @@ void show_menu() {
     printf("┃ 1 : Create Maze ┃\n");
     printf("┃ 2 : Load Maze   ┃\n");
     printf("┃ 3 : Play        ┃\n");
+    printf("┃ 4 : Score Board ┃\n");
     printf("┗━━━━━━━━━━━━━━━━━┛\n");
 }
 
@@ -16,7 +17,7 @@ void build_file_path(char *maze_name, char *question, char *path) {
 }
 
 int player_interact(maze *m) {
-    int action_number = ask_for_number(0, 3, "Choose your action : ");
+    int action_number = ask_for_number(0, 4, "Choose your action : ");
     switch ((action)action_number) {
     case QUIT:
         return 0;
@@ -32,6 +33,9 @@ int player_interact(maze *m) {
             return 1;
         }
         play(m);
+        return 1;
+    case SCORE_BOARD:
+        show_score_board();
         return 1;
     default:
         fprintf(stderr, "Unknown action, quitting...\n");
@@ -91,10 +95,12 @@ void create_maze(maze *m) {
     save_maze(m, maze_path_name);
 }
 
-int show_maze_list() {
+int show_file_list(char *list_name) {
     struct dirent *de;
+    char path[MAX_FILE_PATH_SIZE];
+    snprintf(path, MAX_FILE_PATH_SIZE, "./%s/", list_name);
 
-    DIR *dr = opendir("./mazes/");
+    DIR *dr = opendir(path);
 
     int n = 0;
     if (dr == NULL) {
@@ -115,7 +121,7 @@ int show_maze_list() {
     }
     rewinddir(dr);
 
-    printf("\nList of available mazes : \n");
+    printf("\nList of available %s : \n", list_name);
     while ((de = readdir(dr)) != NULL)
         if (de->d_name[0] != '.')
             printf("%s\n", de->d_name);
@@ -125,7 +131,7 @@ int show_maze_list() {
 }
 
 void load_maze(maze *m) {
-    if (!show_maze_list()) {
+    if (!show_file_list("mazes")) {
         return;
     }
 
@@ -146,7 +152,7 @@ void load_maze(maze *m) {
     file_maze_load(m);
 }
 
-void file_maze_load(maze *m){
+void file_maze_load(maze *m) {
     char path[MAX_FILE_PATH_SIZE];
     snprintf(path, MAX_FILE_PATH_SIZE, "mazes/%s.cfg", m->maze_name);
 
@@ -159,8 +165,8 @@ void file_maze_load(maze *m){
     int height;
     int width;
     fread(&height, 1, sizeof(int), maze_file);
-    fread(&width,  1, sizeof(int), maze_file);
-    
+    fread(&width, 1, sizeof(int), maze_file);
+
     init_maze(m, height, width);
     for (int i = 0; i < height; i++) {
         fread(m->map[i], sizeof(m->map[i][0]), width, maze_file);
@@ -186,6 +192,32 @@ void play(maze *m) {
         movement_code = toupper(movement[0]);
         dir = get_direction(movement_code);
     } while (!handle_move(m, dir));
+}
+
+void show_score_board() {
+    if (!show_file_list("score")) {
+        return;
+    }
+
+    char maze_name[MAX_MAZE_NAME_SIZE];
+    char maze_score_path_name[MAX_FILE_PATH_SIZE];
+    ask_for_string(MAX_MAZE_NAME_SIZE,
+                   "Enter the name of the maze you want to open the score : ", maze_name);
+    snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "score/%s.score", maze_name);
+    FILE *score_file = fopen(maze_score_path_name, "r");
+    while (score_file == NULL) {
+        fprintf(stderr, "File doesn't exist please try again\n");
+        ask_for_string(MAX_MAZE_NAME_SIZE,
+                       "Enter the name of the maze you want to open the score : ", maze_name);
+        snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "score/%s.score", maze_name);
+        score_file = fopen(maze_score_path_name, "r");
+    }
+    printf("\n");
+    char c;
+    while ((c = fgetc(score_file)) != EOF) {
+        printf("%c", c);
+    }
+    printf("\n");
 }
 
 int handle_move(maze *m, direction dir) {
@@ -228,7 +260,7 @@ int handle_move(maze *m, direction dir) {
     if (*next_tile == EXIT) {
         printf("YOU WON !\n");
         printf("Your score : %d\n", m->score);
-        if(strcmp(m->maze_name, "") == 0){
+        if (strcmp(m->maze_name, "") == 0) {
             return 1;
         }
 
