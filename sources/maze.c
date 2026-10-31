@@ -53,6 +53,7 @@ int init_maze(maze *m, int height, int width) {
         fprintf(stderr, "init maze doesn't support even height or width : %d %d", height, width);
         return 0;
     }
+    free_maze(m);
     m->height = height;
     m->width = width;
     m->score = SCORE_START;
@@ -113,6 +114,7 @@ void add_items(maze *m) {
 }
 
 void free_maze(maze *maze) {
+    printf("cleaning maze\n");
     if (maze == NULL || maze->map == NULL) {
         return;
     }

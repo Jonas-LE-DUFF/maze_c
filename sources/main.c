@@ -2,7 +2,7 @@
 
 int main() {
 
-    maze *m = malloc(sizeof(maze));
+    maze *m = calloc(1, sizeof(maze));
 
     do {
         show_menu();

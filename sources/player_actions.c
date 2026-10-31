@@ -110,6 +110,7 @@ int show_maze_list() {
         fprintf(
             stderr,
             "Error there's no maze available, please create one before trying to load a maze\n");
+        closedir(dr);
         return 0;
     }
     rewinddir(dr);
@@ -158,8 +159,8 @@ void file_maze_load(maze *m){
     int height;
     int width;
     fread(&height, 1, sizeof(int), maze_file);
-    fread(&width, 1, sizeof(int), maze_file);
-
+    fread(&width,  1, sizeof(int), maze_file);
+    
     init_maze(m, height, width);
     for (int i = 0; i < height; i++) {
         fread(m->map[i], sizeof(m->map[i][0]), width, maze_file);
