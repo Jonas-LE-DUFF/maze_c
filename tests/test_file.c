@@ -42,9 +42,9 @@ MU_TEST(test_load_maze_file) {
 }
 
 MU_TEST(test_score_file_creation) {
-    create_score_file("score/test_score.score", "Agathe", 100);
+    create_score_file("scores/test_score.score", "Agathe", 100);
 
-    FILE *f = fopen("score/test_score.score", "r");
+    FILE *f = fopen("scores/test_score.score", "r");
     int row;
     int score;
     char name[PLAYER_NAME_MAX_LENGTH];
@@ -56,14 +56,14 @@ MU_TEST(test_score_file_creation) {
     mu_assert_int_eq(100, score);
     mu_assert_string_eq("Agathe", name);
     
-    remove("score/test_score.score");
+    remove("scores/test_score.score");
     fclose(f);
 }
 
 MU_TEST(test_score_file_adding) {
-    create_score_file("score/test_insert.score", "Agathe", 100);
+    create_score_file("scores/test_insert.score", "Agathe", 100);
 
-    FILE *f = fopen("score/test_insert.score", "r+");
+    FILE *f = fopen("scores/test_insert.score", "r+");
     mu_assert(f != NULL, "handle score should create a new file when it doesn't exist\n");
     insert_score_in_file(f, "pro", 151);
     insert_score_in_file(f, "noob", 4);
@@ -91,7 +91,7 @@ MU_TEST(test_score_file_adding) {
     mu_assert_string_eq("ultra_mauvais", name);
     //shouldn't be ultra_nul as we're keeping only the ten best score
 
-    remove("score/test_insert.score");
+    remove("scores/test_insert.score");
     fclose(f);
 }
 
@@ -104,6 +104,8 @@ MU_TEST_SUITE(test_file) {
 
 int run_test(void) {
     MU_RUN_SUITE(test_file);
+    remove("scores/test_score.score");
+    remove("scores/test_insert.score");
 
     MU_REPORT();
     return MU_EXIT_CODE;
@@ -111,6 +113,5 @@ int run_test(void) {
 
 int main() {
     run_test();
-    remove("score/test_insert.score");
-    remove("score/test_score.score");
+
 }

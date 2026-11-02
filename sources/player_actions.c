@@ -28,7 +28,7 @@ int player_interact(maze *m) {
         load_maze(m);
         return 1;
     case PLAY:
-        if (m == NULL) {
+        if (m == NULL || m->map == NULL) {
             fprintf(stderr, "Please load or create a maze you want to play on\n");
             return 1;
         }
@@ -112,10 +112,10 @@ int show_file_list(char *list_name) {
             break;
         }
     }
-    if (n <= 2) { // there's only . and .. considering empty
+    if (n <= 2) { // there's only '.' and '..', considering empty
         fprintf(
             stderr,
-            "Error there's no maze available, please create one before trying to load a maze\n");
+            "Error : there're no %s, please create one and try again\n", list_name);
         closedir(dr);
         return 0;
     }
@@ -195,15 +195,15 @@ void play(maze *m) {
 }
 
 void show_score_board() {
-    if (!show_file_list("score")) {
+    if (!show_file_list("scores")) {
         return;
     }
-
+ 
     char maze_name[MAX_MAZE_NAME_SIZE];
     char maze_score_path_name[MAX_FILE_PATH_SIZE];
     ask_for_string(MAX_MAZE_NAME_SIZE,
                    "Enter the name of the maze you want to open the score : ", maze_name);
-    snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "score/%s.score", maze_name);
+    snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "scores/%s.score", maze_name);
     FILE *score_file = fopen(maze_score_path_name, "r");
     while (score_file == NULL) {
         fprintf(stderr, "File doesn't exist please try again\n");

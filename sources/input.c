@@ -40,11 +40,19 @@ int ask_for_number(int min, int max, char *question) {
 }
 
 void ask_for_string(int max, char *question, char *dest) {
-    char str[max];
-    printf("%s", question);
-    if (fgets(str, max, INPUT_STREAM) == NULL) {
-        dest[0] = '\0';
-        return;
+    char str[max + 2]; // on for '\0' another to detect if the string is too long
+    int error = 1;
+    while (error == 1) {
+        error = 0;
+        printf("%s", question);
+        fgets(str, sizeof(str), stdin);
+        size_t length = strlen(str);
+        if (length > (size_t) max) {
+            printf("String too long please try again\n");
+            scanf("%*[^\n]");  // Discard all characters until newline
+            scanf("%*c");      // Discard the newline itself
+            error = 1;
+        }
     }
     str[strcspn(str, "\n")] = '\0';
     strcpy(dest, str);
