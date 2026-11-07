@@ -53,7 +53,6 @@ MU_TEST(generate_perfect_maze_test1) {
     m = (maze){0};
     mu_assert(generate_perfect_maze(&m, 5, 8) == 0,
               "generate_perfect_maze should not do anything if the given height or width is even");
-    free_maze(&m);
     generate_perfect_maze(&m, 5, 9);
     mu_assert(m.map[0][1] == PLAYER, "generate_perfect_maze should place the player");
     mu_assert(m.map[4][7] == LOCKED_DOOR, "generate_perfect_maze should place the door");
@@ -99,10 +98,24 @@ MU_TEST(test_score) {
     mu_assert_int_eq(1, handle_move(&m, DOWN));
 }
 
+MU_TEST(test_hard_maze_gen) {
+    srand(0);
+    maze* maze_gen = calloc(1, sizeof(maze));
+    generate_difficult_maze(maze_gen, 15, 15);
+
+    display_maze(*maze_gen);
+
+    free_maze(maze_gen);
+    free(maze_gen);
+
+    // todo : tester la partie classique du labyrinthe
+}
+
 MU_TEST_SUITE(test_maze_gen) {
     MU_SUITE_CONFIGURE(NULL, &teardown);
     MU_RUN_TEST(init_test);
     MU_RUN_TEST(generate_perfect_maze_test1);
+    MU_RUN_TEST(test_hard_maze_gen);
 }
 
 MU_TEST_SUITE(test_maze_play) {

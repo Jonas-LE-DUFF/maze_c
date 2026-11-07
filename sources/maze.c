@@ -1,5 +1,33 @@
 #include "maze.h"
 
+int generate_difficult_maze(maze *m, int height, int width){
+    generate_perfect_maze(m, height, width);
+    int extra_remove_walls_size = ((height-2) * (width-2))/ 2;
+    position extra_remove_walls[extra_remove_walls_size];
+    int rm_wall_i = 0;
+    for (int i = 1; i < height-1; i++)
+    {
+        for (int j = 1; j < width-1; j++)
+        {
+            tile *tile = get_tile(*m, (position){i, j});
+            if ((i + j) % 2 == 1 && *tile == WALL)
+            {
+                extra_remove_walls[rm_wall_i++] = (position){i, j};
+            }
+        }
+    }
+
+    shuffle(extra_remove_walls, rm_wall_i, sizeof(position));
+
+    /*
+    for (int i = 0; i < (rm_wall_i / 5) + 1; i++)
+    {
+        *get_tile(*m, extra_remove_walls[i]) = EMPTY;
+    }*/
+    
+    return 0;
+}
+
 int generate_perfect_maze(maze *m, int height, int width) {
     if (height % 2 == 0 || width % 2 == 0) {
         fprintf(stderr, "height and width must be odd : %d %d\n", height, width);
@@ -114,7 +142,6 @@ void add_items(maze *m) {
 }
 
 void free_maze(maze *maze) {
-    printf("cleaning maze\n");
     if (maze == NULL || maze->map == NULL) {
         return;
     }
@@ -129,8 +156,8 @@ void free_maze(maze *maze) {
 }
 
 // from  :  https://stackoverflow.com/questions/6127503/shuffle-array-in-c
+// where n is the amount of elements you want to shuffle and size the size of one element in the array
 void shuffle(void *array, int n, int size) {
-    srand(time(NULL));
     char tmp[size];
     char *arr = array;
     int stride = size * sizeof(char);

@@ -28,7 +28,7 @@ $(MAZES_FOLDER) | $(SCORE_FOLDER):
 	mkdir $@
 
 tests/% : build/%.o $(OBJS)
-	$(CC) -o $@ $^
+	$(CC) $(SANITIZE_FLAGS) -o $@ $^
 
 build/main.o : $(SRC)/main.c build/maze.o
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@

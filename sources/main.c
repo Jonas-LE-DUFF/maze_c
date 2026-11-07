@@ -1,6 +1,7 @@
 #include "maze.h"
 
 int main() {
+    srand(time(NULL));
 
     maze *m = calloc(1, sizeof(maze));
 

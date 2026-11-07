@@ -1,6 +1,7 @@
 #include "frontend.h"
 
 void display_maze(maze m) {
+    printf("\n");
     for (int i = 0; i < m.height; i++) {
         for (int j = 0; j < m.width; j++) {
             position pos = {i, j};
@@ -19,7 +20,7 @@ void print_character(maze m, position pos) {
         print_wall_character(m, pos);
         break;
     case PLAYER:
-        printf("ᐂ");
+        printf("⍾");
         break;
     case EXIT:
         printf("-");
@@ -78,5 +79,7 @@ void print_wall_character(maze m, position pos) {
         printf("╸");
     } else if (right) {
         printf("╺");
+    } else {
+        printf("▪");
     }
 }

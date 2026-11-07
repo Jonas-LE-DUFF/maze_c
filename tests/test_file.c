@@ -1,7 +1,7 @@
 #include "test.h"
 
 MU_TEST(test_create_maze_file) {
-    maze *m = malloc(sizeof(maze));
+    maze *m = calloc(1, sizeof(maze));
     
     save_maze(m, "mazes/test_config.cfg");
 
@@ -9,16 +9,18 @@ MU_TEST(test_create_maze_file) {
     mu_assert(f != NULL, "create maze should create a maze file in mazes with .cfg extension\n");
     fclose(f);
     remove("mazes/test_config.cfg");
+
+    free_maze(m);
     free(m);
 }
 
 MU_TEST(test_load_maze_file) {
-    maze *m = malloc(sizeof(maze));
+    maze *m = calloc(1, sizeof(maze));
     generate_perfect_maze(m, 9, 7);
     strcpy(m->maze_name, "test_load");
     save_maze(m, "mazes/test_load.cfg");
 
-    maze *loaded_maze = malloc(sizeof(maze));
+    maze *loaded_maze = calloc(1, sizeof(maze));
     strcpy(loaded_maze->maze_name, "test_load");
 
     file_maze_load(loaded_maze);
@@ -37,7 +39,9 @@ MU_TEST(test_load_maze_file) {
     
     remove("mazes/test_load.cfg");
 
+    free_maze(m);
     free(m);
+    free_maze(loaded_maze);
     free(loaded_maze);
 }
 

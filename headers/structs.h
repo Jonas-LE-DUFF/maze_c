@@ -2,11 +2,8 @@
 
 #include <stdlib.h>
 
-#define MAZE_WIDTH 25
-#define MAZE_HEIGHT 11
-
-#define MAX_MAZE_WIDTH 1000
-#define MAX_MAZE_HEIGHT 1000
+#define MAX_MAZE_WIDTH 200
+#define MAX_MAZE_HEIGHT 200
 #define MAX_MAZE_NAME_SIZE 50
 #define MAX_FILE_PATH_SIZE 74
 

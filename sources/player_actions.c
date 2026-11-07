@@ -73,8 +73,16 @@ void create_maze(maze *m) {
         width = ask_for_number(3, MAX_MAZE_WIDTH, "Width of your maze (must be odd and > 3) : ");
     }
 
-    generate_perfect_maze(m, height, width);
+    printf("Choose you maze difficulty : \n");
+    printf("1 : easy\n");
+    printf("2 : hard\n");
+    int difficulty = ask_for_number(1, 2, "Difficulty : ");
 
+    if(difficulty == 1)
+        generate_perfect_maze(m, height, width);
+    else
+        generate_difficult_maze(m, height, width);
+        
     display_maze(*m);
 
     char maze_name[MAX_MAZE_NAME_SIZE];
