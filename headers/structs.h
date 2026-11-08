@@ -27,7 +27,7 @@
 #define ORC_RADIUS   10
 // new stats after the orc found a treasure
 #define ORC_DETECTION_RADIUS 5
-#define ORC_PATROL_RADIUS 2
+#define ORC_PATROL_RADIUS 5
 
 typedef enum {
     EMPTY = 0,

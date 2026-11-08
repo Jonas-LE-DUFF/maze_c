@@ -199,11 +199,6 @@ void file_maze_load(maze *m) {
         }
     }
 
-    for (int i = 0; i < m->monster_amount; i++) {
-        printf("%d, %d, %d\n", m->monsters[i]->monster_pos.column, m->monsters[i]->monster_pos.row,
-               m->monsters[i]->radius);
-    }
-
     display_maze(*m);
     fclose(maze_file);
 }

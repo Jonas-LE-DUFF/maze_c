@@ -44,7 +44,7 @@ void move_monster(maze *m, monster *monst,
 // using __attribute__((unused)) to silence warnings
 // cannot remove arguments as they are needed as the callback
 int ghost_condition(__attribute__((unused)) maze m, __attribute__((unused)) position pos){
-    return 1;
+    return 0;
 }
 
 void ghost_behavior(__attribute__((unused)) monster *monster, __attribute__((unused)) maze m, __attribute__((unused)) position pos){
