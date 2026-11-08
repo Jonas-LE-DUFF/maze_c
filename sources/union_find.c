@@ -1,8 +1,11 @@
 #include "union_find.h"
 
+//
 // union-find data structure will allow the maze generation algorithm to be optimized in execution
-// time I used this tutorial to understand this data structure :
-// https://www.youtube.com/watch?v=K1pAB9_l2bM and got the idea from wikipedia
+// time. I used this tutorial to understand this data structure :
+// https://www.youtube.com/watch?v=K1pAB9_l2bM
+// and got the idea from the wikipedia page about the algorithm
+//
 
 node *find(node n) {
     if (n.parent->id != n.id) {

@@ -5,6 +5,7 @@
 #include "position.h"
 #include "structs.h"
 #include "union_find.h"
+#include "monster_moves.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,8 +14,7 @@
 
 int generate_difficult_maze(maze *m, int height, int width);
 int generate_perfect_maze(maze *m, int height, int width);
-int treat_wall(position wall_to_remove, maze *m, node **room_values, direction dir,
-               direction opposed_dir);
+int treat_wall(position wall_to_remove, maze *m, node **room_values, direction dir);
 int init_maze(maze *m, int height, int width);
 void add_items(maze *m);
 

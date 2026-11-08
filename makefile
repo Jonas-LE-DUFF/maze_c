@@ -13,12 +13,12 @@ HEADERS_FOLDER = headers
 SCORES = $(SCORE_FOLDER)/*.score
 MAZES  = $(MAZES_FOLDER)/*.cfg
 
-OBJS = $(addprefix $(BUILD_FOLDER)/, maze.o union_find.o frontend.o position.o input.o player_actions.o score_handler.o)
+OBJS = $(addprefix $(BUILD_FOLDER)/, maze.o union_find.o frontend.o position.o input.o player_actions.o score_handler.o monster_moves.o)
 
 FORMAT_FILES = $(SRC)/*.c headers/*.h
 
 all : $(BUILD_FOLDER)/main.o $(OBJS) | $(MAZES_FOLDER) $(SCORE_FOLDER)
-	$(CC) $(SANITIZE_FLAGS) -o build/maze $^ $(SANITIZE_FLAGS)
+	$(CC) $(SANITIZE_FLAGS) -o build/maze $^
 
 test : tests/test_maze tests/test_file
 	./$(TEST_FOLDER)/test_maze
@@ -30,7 +30,7 @@ $(MAZES_FOLDER) | $(SCORE_FOLDER):
 tests/% : build/%.o $(OBJS)
 	$(CC) $(SANITIZE_FLAGS) -o $@ $^
 
-build/main.o : $(SRC)/main.c build/maze.o
+build/main.o : $(SRC)/main.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 build/%.o : $(SRC)/%.c headers/%.h

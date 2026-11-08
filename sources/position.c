@@ -14,7 +14,6 @@ position get_position_after_move(position pos, direction dir) {
         return (position){pos.row, pos.column - 1};
     default:
         return pos;
-        break;
     }
 }
 
@@ -65,4 +64,61 @@ tile *get_door_tile(maze m) {
 
 tile *get_start_position(maze m) {
     return get_tile(m, (position){0, 1});
+}
+
+int pos_equals(position pos, position other){
+    return pos.column == other.column && pos.row == other.row;
+}
+
+monster *get_monster_at_pos(maze *m, position pos){
+    for (int i = 0; i < m->monster_amount; i++)
+    {
+        monster *monster = m->monsters[i];
+        if (pos_equals(monster->monster_pos, pos))
+        {
+            return monster;
+        }
+    }
+    return NULL;
+}
+
+int get_distance(position pos, position other){
+    return abs(pos.column - other.column)
+        +  abs(pos.row    - other.row   );
+}
+
+int is_in_perimeter(position test, position center, int radius){
+    return abs(test.column - center.column) <= radius
+        && abs(test.row    - center.row   ) <= radius;
+}
+
+int is_border(maze m, position pos){
+    return pos.column == 0 || pos.row == 0 || pos.column == m.width-1 || pos.row == m.height-1;
+}
+
+int is_occupied(maze m, position pos){
+    for(int i = 0; i < m.monster_amount; i++){
+        if(pos_equals(m.monsters[i]->monster_pos, pos)){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+position get_closest_treasure(maze m, position pos){
+    int min_distance = m.height * m.width;
+    position closest = {-1, -1};
+    for (int i = 0; i < m.height; i++)
+    {
+        for (int j = 0; j < m.width; j++)
+        {
+            position tested_pos = {i, j};
+            if(*get_tile(m, tested_pos) == TREASURE
+            && get_distance(tested_pos, pos) < min_distance){
+                min_distance = get_distance(tested_pos, pos);
+                closest = tested_pos;
+            }
+        }
+    }
+    return closest;
 }

@@ -5,9 +5,27 @@ void display_maze(maze m) {
     for (int i = 0; i < m.height; i++) {
         for (int j = 0; j < m.width; j++) {
             position pos = {i, j};
-            print_character(m, pos);
+            monster* monster = get_monster_at_pos(&m, pos);
+            if(monster != NULL){
+                print_monster(*monster);
+            } else {
+                print_character(m, pos);
+            }
         }
         printf("\n");
+    }
+}
+
+void print_monster(monster monster){
+    switch (monster.monster_type)
+    {
+    case GHOST:
+        printf("⍝");
+        break;
+    case ORC:
+        printf("⍥");
+    default:
+        break;
     }
 }
 
@@ -43,6 +61,13 @@ void print_character(maze m, position pos) {
     }
 }
 
+/**
+ * @brief Prints a wall character considering every wall in its surrounding
+ * this way it gives a nice connected wall looked
+ * 
+ * @param m displayed maze
+ * @param pos position of the wall being displayed
+ */
 void print_wall_character(maze m, position pos) {
     int up = is_wall_at(m, get_position_after_move(pos, UP));
     int down = is_wall_at(m, get_position_after_move(pos, DOWN));

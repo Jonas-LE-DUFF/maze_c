@@ -12,8 +12,12 @@ void show_menu() {
 
 void build_file_path(char *maze_name, char *question, char *path) {
     ask_for_string(MAX_MAZE_NAME_SIZE, question, maze_name);
-
     snprintf(path, MAX_FILE_PATH_SIZE, "mazes/%s.cfg", maze_name);
+}
+
+void build_score_path(char *maze_name, char *question, char *path) {
+    ask_for_string(MAX_MAZE_NAME_SIZE, question, maze_name);
+    snprintf(path, MAX_FILE_PATH_SIZE, "scores/%s.score", maze_name);
 }
 
 int player_interact(maze *m) {
@@ -56,6 +60,11 @@ void save_maze(maze *m, char *path) {
         fwrite(m->map[i], sizeof(tile), m->width, maze_file);
     }
     fwrite(m->maze_name, sizeof(char), MAX_MAZE_NAME_SIZE, maze_file);
+    // writing monsters (carfully as they are pointers)
+    fwrite(&m->monster_amount, 1, sizeof(int), maze_file);
+    for (int i = 0; i < m->monster_amount; i++) {
+        fwrite(m->monsters[i], 1, sizeof(monster), maze_file);
+    }
 
     printf("Maze saved to it's file\n");
     fclose(maze_file);
@@ -78,11 +87,11 @@ void create_maze(maze *m) {
     printf("2 : hard\n");
     int difficulty = ask_for_number(1, 2, "Difficulty : ");
 
-    if(difficulty == 1)
+    if (difficulty == 1)
         generate_perfect_maze(m, height, width);
     else
         generate_difficult_maze(m, height, width);
-        
+
     display_maze(*m);
 
     char maze_name[MAX_MAZE_NAME_SIZE];
@@ -95,9 +104,9 @@ void create_maze(maze *m) {
         fclose(f);
         fprintf(stderr, "This maze name is already used please enter another one...\n");
         build_file_path(maze_name, "Enter the name of your maze : ", maze_path_name);
-
         f = fopen(maze_path_name, "r");
     }
+
     strcpy(m->maze_name, maze_name);
 
     save_maze(m, maze_path_name);
@@ -115,15 +124,14 @@ int show_file_list(char *list_name) {
         printf("Could not open current directory");
         return 0;
     }
+    // checking if there're files at all
     while ((de = readdir(dr)) != NULL) {
         if (++n > 2) {
             break;
         }
     }
     if (n <= 2) { // there's only '.' and '..', considering empty
-        fprintf(
-            stderr,
-            "Error : there're no %s, please create one and try again\n", list_name);
+        fprintf(stderr, "Error : there're no %s, please create one and try again\n", list_name);
         closedir(dr);
         return 0;
     }
@@ -145,16 +153,13 @@ void load_maze(maze *m) {
 
     char maze_name[MAX_MAZE_NAME_SIZE];
     char maze_path_name[MAX_FILE_PATH_SIZE];
-    build_file_path(maze_name, "Enter the name of the maze you want to open : ", maze_path_name);
-
-    FILE *maze_file = fopen(maze_path_name, "r");
-    while (maze_file == NULL) {
-        fprintf(stderr, "File doesn't exist please try again\n");
+    FILE *maze_file = NULL;
+    do {
         build_file_path(maze_name,
                         "Enter the name of the maze you want to open : ", maze_path_name);
+        maze_file = fopen(maze_path_name, "r");
+    } while (maze_file == NULL && fprintf(stderr, "File doesn't exist please try again\n"));
 
-        maze_file = fopen(maze_path_name, "rb");
-    }
     strcpy(m->maze_name, maze_name);
 
     file_maze_load(m);
@@ -180,6 +185,24 @@ void file_maze_load(maze *m) {
         fread(m->map[i], sizeof(m->map[i][0]), width, maze_file);
     }
     fread(m->maze_name, sizeof(char), MAX_MAZE_NAME_SIZE, maze_file);
+    fread(&m->monster_amount, sizeof(int), 1, maze_file);
+    if (m->monster_amount != 0) {
+        m->monsters = malloc(sizeof(*m->monsters) * m->monster_amount);
+        for (int i = 0; i < m->monster_amount; i++) {
+            m->monsters[i] = malloc(sizeof(*m->monsters[i]));
+            fread(m->monsters[i], sizeof(*m->monsters[i]), 1, maze_file);
+            if (m->monsters[i]->monster_type == GHOST) {
+                m->monsters[i]->movement = move_ghost;
+            } else {
+                m->monsters[i]->movement = move_orc;
+            }
+        }
+    }
+
+    for (int i = 0; i < m->monster_amount; i++) {
+        printf("%d, %d, %d\n", m->monsters[i]->monster_pos.column, m->monsters[i]->monster_pos.row,
+               m->monsters[i]->radius);
+    }
 
     display_maze(*m);
     fclose(maze_file);
@@ -206,20 +229,16 @@ void show_score_board() {
     if (!show_file_list("scores")) {
         return;
     }
- 
+
     char maze_name[MAX_MAZE_NAME_SIZE];
     char maze_score_path_name[MAX_FILE_PATH_SIZE];
-    ask_for_string(MAX_MAZE_NAME_SIZE,
-                   "Enter the name of the maze you want to open the score : ", maze_name);
-    snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "scores/%s.score", maze_name);
-    FILE *score_file = fopen(maze_score_path_name, "r");
-    while (score_file == NULL) {
-        fprintf(stderr, "File doesn't exist please try again\n");
-        ask_for_string(MAX_MAZE_NAME_SIZE,
-                       "Enter the name of the maze you want to open the score : ", maze_name);
-        snprintf(maze_score_path_name, MAX_FILE_PATH_SIZE, "score/%s.score", maze_name);
+    FILE *score_file = NULL;
+    do {
+        build_score_path(maze_name, "Enter the name of the maze you want to open the score : ",
+                         maze_score_path_name);
         score_file = fopen(maze_score_path_name, "r");
-    }
+    } while (score_file == NULL && fprintf(stderr, "File doesn't exist please try again\n"));
+
     printf("\n");
     char c;
     while ((c = fgetc(score_file)) != EOF) {
@@ -239,18 +258,19 @@ int handle_move(maze *m, direction dir) {
         fprintf(stderr, "Position of player can not be found\n");
         return 0;
     }
-    tile *player_tile = get_tile(*m, player_pos);
 
+    tile *player_tile = get_tile(*m, player_pos);
     position next_pos = get_position_after_move(player_pos, dir);
     tile *next_tile = get_tile(*m, next_pos);
-    if (*next_tile == WALL) {
+
+    if (*next_tile == WALL || *next_tile == LOCKED_DOOR) {
         fprintf(stderr, "Wall in the way\n");
         return 0;
     }
 
     if (*next_tile == EMPTY || *next_tile == KEY || *next_tile == TREASURE || *next_tile == TRAP) {
         if (*next_tile == KEY) {
-            *get_door_tile(*m) = EXIT;
+            *get_door_tile(*m) = EXIT; // opening exit
         }
         if (*next_tile == TREASURE) {
             m->score += TREASURE_BONUS;
@@ -258,10 +278,19 @@ int handle_move(maze *m, direction dir) {
         if (*next_tile == TRAP) {
             m->score -= TRAP_MALUS;
         }
+        monster *monster = get_monster_at_pos(m, next_pos);
+        if (monster != NULL) {
+            m->score -= monster->penality_points;
+            remove_monster(m, *monster);
+        }
 
         m->score -= SCORE_LOSS;
         *player_tile = EMPTY;
         *next_tile = PLAYER;
+        for (int i = 0; i < m->monster_amount; i++) {
+            if (m->monsters[i] != NULL)
+                m->monsters[i]->movement(m, m->monsters[i]);
+        }
         return 0;
     }
 
@@ -273,6 +302,8 @@ int handle_move(maze *m, direction dir) {
         }
 
         handle_score(*m);
+
+        // reinitializing maze with it's file
         file_maze_load(m);
         return 1;
     }
