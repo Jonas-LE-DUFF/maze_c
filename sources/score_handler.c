@@ -37,7 +37,7 @@ int handle_score(maze m) {
     ask_for_string(PLAYER_NAME_MAX_LENGTH, "Enter your pseudo : ", player_name);
 
     if (f == NULL) {
-        printf("No score found for this maze creating score file...\n");
+        printf("No score found for this maze creating a new score file...\n");
         create_score_file(path, player_name, m.score);
         return 0;
     } else {

@@ -119,6 +119,7 @@ void load_maze(maze *m) {
     strcpy(m->maze_name, maze_name);
 
     file_maze_load(m);
+    display_maze(*m);
 }
 
 void file_maze_load(maze *m) {
@@ -155,7 +156,6 @@ void file_maze_load(maze *m) {
         }
     }
 
-    display_maze(*m);
     fclose(maze_file);
 }
 
