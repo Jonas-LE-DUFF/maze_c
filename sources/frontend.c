@@ -118,3 +118,39 @@ void print_wall_character(maze m, position pos) {
         printf("▪");
     }
 }
+
+
+
+int show_file_list(char *list_name) {
+    struct dirent *de;
+    char path[MAX_FILE_PATH_SIZE];
+    snprintf(path, MAX_FILE_PATH_SIZE, "./%s/", list_name);
+
+    DIR *dr = opendir(path);
+
+    int n = 0;
+    if (dr == NULL) {
+        printf("Could not open current directory");
+        return 0;
+    }
+    // checking if there're files at all
+    while ((de = readdir(dr)) != NULL) {
+        if (++n > 2) {
+            break;
+        }
+    }
+    if (n <= 2) { // there's only '.' and '..', considering empty
+        fprintf(stderr, "Error : there're no %s, please create one and try again\n", list_name);
+        closedir(dr);
+        return 0;
+    }
+    rewinddir(dr);
+
+    printf("\nList of available %s : \n", list_name);
+    while ((de = readdir(dr)) != NULL)
+        if (de->d_name[0] != '.')
+            printf("%s\n", de->d_name);
+    closedir(dr);
+    printf("\n");
+    return 1;
+}
