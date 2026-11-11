@@ -5,7 +5,7 @@
 #include "position.h"
 #include "structs.h"
 #include "union_find.h"
-#include "monster_moves.h"
+#include "monsters.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

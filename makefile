@@ -13,7 +13,7 @@ HEADERS_FOLDER = headers
 SCORES = $(SCORE_FOLDER)/*.score
 MAZES  = $(MAZES_FOLDER)/*.cfg
 
-OBJS = $(addprefix $(BUILD_FOLDER)/, maze.o union_find.o frontend.o position.o input.o player_actions.o score_handler.o monster_moves.o)
+OBJS = $(addprefix $(BUILD_FOLDER)/, maze.o union_find.o frontend.o position.o input.o player_actions.o score_handler.o monsters.o)
 
 FORMAT_FILES = $(SRC)/*.c headers/*.h
 

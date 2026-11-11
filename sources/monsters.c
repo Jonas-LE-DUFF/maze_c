@@ -1,4 +1,4 @@
-#include "monster_moves.h"
+#include "monsters.h"
 
 void move_monster(maze *m, monster *monst, 
     int (condition)(maze m, position pos), 
@@ -92,7 +92,7 @@ void init_monsters(maze *m){
     for (int i = 0; i < m->monster_amount; i++)
     {   
         monster_type type = i%2;
-        position monster_pos = {(rand() % (m->height-1)) + 1, (rand() % (m->width-1)) + 1};
+        position monster_pos = {(rand() % (m->height-2)) + 1, (rand() % (m->width-2)) + 1};
         m->monsters[i] = malloc(sizeof(monster));
         if(type == GHOST){
             *m->monsters[i] = (monster){type, monster_pos, monster_pos, GHOST_RADIUS, GHOST_PENALITY_POINTS, move_ghost};
