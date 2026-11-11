@@ -147,9 +147,15 @@ int show_file_list(char *list_name) {
     rewinddir(dr);
 
     printf("\nList of available %s : \n", list_name);
-    while ((de = readdir(dr)) != NULL)
-        if (de->d_name[0] != '.')
-            printf("%s\n", de->d_name);
+    while ((de = readdir(dr)) != NULL){
+        if (de->d_name[0] == '.'){
+            continue;
+        }
+        // visually removing extension from the file
+        char *last_dot = strrchr(de->d_name, '.');
+        *last_dot = '\0';
+        printf("%s\n", de->d_name);
+    }
     closedir(dr);
     printf("\n");
     return 1;
