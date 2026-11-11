@@ -1,15 +1,5 @@
 #include "player_actions.h"
 
-void show_menu() {
-    printf("┏━━━━━━━━━━━━━━━━━┓\n");
-    printf("┃ 0 : Quit        ┃\n");
-    printf("┃ 1 : Create Maze ┃\n");
-    printf("┃ 2 : Load Maze   ┃\n");
-    printf("┃ 3 : Play        ┃\n");
-    printf("┃ 4 : Score Board ┃\n");
-    printf("┗━━━━━━━━━━━━━━━━━┛\n");
-}
-
 void build_file_path(char *maze_name, char *question, char *path) {
     ask_for_string(MAX_MAZE_NAME_SIZE, question, maze_name);
     snprintf(path, MAX_FILE_PATH_SIZE, "mazes/%s.cfg", maze_name);

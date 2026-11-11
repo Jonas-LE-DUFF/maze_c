@@ -1,5 +1,15 @@
 #include "frontend.h"
 
+void show_menu() {
+    printf("┏━━━━━━━━━━━━━━━━━┓\n");
+    printf("┃ 0 : Quit        ┃\n");
+    printf("┃ 1 : Create Maze ┃\n");
+    printf("┃ 2 : Load Maze   ┃\n");
+    printf("┃ 3 : Play        ┃\n");
+    printf("┃ 4 : Score Board ┃\n");
+    printf("┗━━━━━━━━━━━━━━━━━┛\n");
+}
+
 void display_maze(maze m) {
     printf("\n");
     for (int i = 0; i < m.height; i++) {

@@ -3,9 +3,9 @@
 #include "input.h"
 #include "maze.h"
 #include "score_handler.h"
+#include "frontend.h"
 #include <dirent.h>
 
-void show_menu();
 int player_interact(maze *m);
 void create_maze(maze *m);
 int show_file_list(char *list_name);
