@@ -1,17 +1,12 @@
-problème d'optimisation : 
-- répétition de la récupération des murs "retirables"
-- on ne rapetisse pas la liste de monstres après en avoir éliminé un
-- on n'utilise pas de size_t ou de unsigned int alors qu'on pourrait
-- la fonction de libération de matrice n'a pas été généralisée
-- quelques répétitions ici et là
-
-problèmes logiques : 
-- les monstres bougent quasiment aléatoirement
-- les orcs continuent de rester autour du même trésor même si celui ci a été collecté
-- parfois le code fait des "revérifications" comme pour les générations de labyrinthe avec les  nombres impairs mais par exemple on ne reteste pas pour la taille maximale du labyrinthe
-- les monstres sont positionnées de anière purement hasardeuse
-
-usage de l'IA : 
-- utilisation partielle pour résoudre des bugs difficiles à comprendre
-- aucune utilisation dans la compréhension du sujet
-- une seule intervention dans l'écriture du code (minime... 3-4 lignes)
+# Mini-Projet introduction à la programmation
+## Description du jeu du labyrinthe
+Cette application va vous permettre de générer, sauvegarder et charger des labyrinthes.  
+Bien évidement vous allez aussi pouvoir y jouer et comparer votre score avec ces de vos adversaires.  
+## Lancement de l'application
+Pour lancer l'application utilisez les commandes   
+`make` puis `./build/maze`
+## Règles du jeu
+Le but du jeu est simple, vous (`⍾`) devez accéder à la porte (`-`) en bas à droite du labyrinthe.  
+Pour ce faire vous devez trouver la clef (`k`) sans quoi la porte restera fermée (`█`)  
+Sur le chemin, vous croiserez des pièges (`w`) des trésors (`+`) et des monstres, des fantômes (`⍝`) et des orcs (`⍥`)  
+Vous commencez avec 100 points et chaque mouvement vous en coûte 1.
