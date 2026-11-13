@@ -17,30 +17,30 @@ OBJS = $(addprefix $(BUILD_FOLDER)/, maze.o union_find.o frontend.o position.o i
 
 FORMAT_FILES = $(SRC)/*.c headers/*.h
 
-all : $(BUILD_FOLDER)/main.o $(OBJS) | $(MAZES_FOLDER) $(SCORE_FOLDER)
+all : $(BUILD_FOLDER)/main.o $(OBJS) | $(MAZES_FOLDER) $(SCORE_FOLDER) $(BUILD_FOLDER)
 	$(CC) $(SANITIZE_FLAGS) -o build/maze $^
 
 test : tests/test_maze tests/test_file
 	./$(TEST_FOLDER)/test_maze
 	./$(TEST_FOLDER)/test_file
 
-$(MAZES_FOLDER) | $(SCORE_FOLDER): 
+$(MAZES_FOLDER) $(SCORE_FOLDER) $(BUILD_FOLDER): 
 	mkdir $@
 
 tests/% : build/%.o $(OBJS)
 	$(CC) $(SANITIZE_FLAGS) -o $@ $^
 
-build/main.o : $(SRC)/main.c
+build/main.o : $(SRC)/main.c | $(BUILD_FOLDER)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-build/%.o : $(SRC)/%.c headers/%.h
+build/%.o : $(SRC)/%.c headers/%.h | $(BUILD_FOLDER)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-build/%.o : $(TEST_FOLDER)/%.c $(TEST_FOLDER)/test.h
+build/%.o : $(TEST_FOLDER)/%.c $(TEST_FOLDER)/test.h | $(BUILD_FOLDER)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-build/test_maze.o: $(TEST_FOLDER)/test_maze.c $(TEST_FOLDER)/test.h $(TEST_FOLDER)/minunit.h
-build/test_file.o: $(TEST_FOLDER)/test_file.c $(TEST_FOLDER)/test.h $(TEST_FOLDER)/minunit.h
+build/test_maze.o: $(TEST_FOLDER)/test_maze.c $(TEST_FOLDER)/test.h $(TEST_FOLDER)/minunit.h | $(BUILD_FOLDER)
+build/test_file.o: $(TEST_FOLDER)/test_file.c $(TEST_FOLDER)/test.h $(TEST_FOLDER)/minunit.h | $(BUILD_FOLDER)
 
 clean : 
 	rm -f $(BUILD_FOLDER)/* $(SCORES) $(MAZES)
